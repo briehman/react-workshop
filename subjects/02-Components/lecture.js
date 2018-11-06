@@ -2,43 +2,73 @@ import "./styles.css";
 
 import React from "react";
 import ReactDOM from "react-dom";
+import PropTypes from 'prop-types';
 
-let isOpen = false;
-
-function handleClick() {
-  isOpen = !isOpen;
-  updateThePage();
-}
-
-function ContentToggle() {
-  let summaryClassName = "content-toggle-summary";
-
-  if (isOpen) {
-    summaryClassName += " content-toggle-summary-open";
+class ContentToggle extends React.Component {
+  static propTypes = {
+    summary: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
+    onToggle: PropTypes.func
   }
 
-  return (
-    <div className="content-toggle">
-      <button onClick={handleClick} className={summaryClassName}>
-        Tacos
-      </button>
-      {isOpen && (
-        <div className="content-toggle-details">
+  state = { isOpen: false };
+
+  handleClick = () => {
+    if (this.props.onToggle) {
+      this.props.onToggle();
+    }
+    this.setState({ isOpen: !this.state.isOpen });
+  };
+
+  render() {
+    let summaryClassName = "content-toggle-summary";
+
+    if (this.state.isOpen) {
+      summaryClassName += " content-toggle-summary-open";
+    }
+
+    return (
+      <div className="content-toggle">
+        <button onClick={this.handleClick} className={summaryClassName}>
+          {this.props.summary}
+        </button>
+        {this.state.isOpen && (
+          <div className="content-toggle-details">
+            {this.props.children}
+          </div>
+        )}
+      </div>
+    );
+  }
+}
+
+class ToggleTracker extends React.Component {
+  state = { numToggles: 0 }
+
+  handleToggle = () => {
+    this.setState({ numToggles: this.state.numToggles + 1 });
+  }
+
+  render() {
+    return (
+      <div>
+        <p>Number of toggles: {this.state.numToggles}</p>
+        <ContentToggle onToggle={this.handleToggle} summary="Tacos">
           <p>
             A taco is a traditional Mexican dish composed of a corn or
             wheat tortilla folded or rolled around a filling.
           </p>
-        </div>
-      )}
-    </div>
-  );
+        </ContentToggle>
+
+        <ContentToggle onToggle={this.handleToggle} summary="Burritos">
+          <p>Burritos are delicious. Kind of like tacos but bigger.</p>
+        </ContentToggle>
+      </div>
+    );
+  }
 }
 
-function updateThePage() {
-  ReactDOM.render(<ContentToggle />, document.getElementById("app"));
-}
-
-updateThePage();
+ReactDOM.render(<ToggleTracker />, document.getElementById("app"));
 
 ////////////////////////////////////////////////////////////////////////////////
 // What happens when we want to render 2 <ContentToggle>s? Shared mutable state!

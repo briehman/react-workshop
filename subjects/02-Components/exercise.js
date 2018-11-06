@@ -10,8 +10,10 @@
 //
 // - Add descriptive propTypes to <App> and <Tabs>
 ////////////////////////////////////////////////////////////////////////////////
+
 import React from "react";
 import ReactDOM from "react-dom";
+import PropTypes from 'prop-types';
 
 const styles = {};
 
@@ -34,17 +36,49 @@ styles.panel = {
 };
 
 class Tabs extends React.Component {
+  static propTypes = {
+    data: PropTypes.array.isRequired,
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = { activeTab: this.props.data[0].id };
+  }
+
+  changeTab = e => {
+    let selectedId = parseInt(e.target.getAttribute("data-id"));
+    this.setState({ activeTab: selectedId });
+  };
+
   render() {
+    let tabs = this.props.data.map(sport => {
+      let tabClass =
+        this.state.activeTab === sport.id
+          ? styles.activeTab
+          : styles.tab;
+
+      return (
+        <div
+          key={sport.id}
+          className="Tab"
+          style={tabClass}
+          data-id={sport.id}
+          onClick={this.changeTab}
+        >
+          {sport.name}
+        </div>
+      );
+    });
+
+    let tabContent = this.props.data.filter(
+      d => d.id === this.state.activeTab
+    )[0].description;
+
     return (
       <div className="Tabs">
-        <div className="Tab" style={styles.activeTab}>
-          Active
-        </div>
-        <div className="Tab" style={styles.tab}>
-          Inactive
-        </div>
+        {tabs}
         <div className="TabPanel" style={styles.panel}>
-          Panel
+          {tabContent}
         </div>
       </div>
     );
@@ -52,6 +86,10 @@ class Tabs extends React.Component {
 }
 
 class App extends React.Component {
+  static propTypes = {
+    sports: PropTypes.array.isRequired,
+  }
+
   render() {
     return (
       <div>
