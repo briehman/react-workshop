@@ -1,6 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+let contacts = [
+  "Michael Jackson",
+  "Kanye West",
+  "Taylor Swift"
+];
+
+function ContactList() {
+  let element = (
+    <ul>
+      {contacts.map((contact, index) => {
+        return (
+          <li key={index}>{contact} </li>
+        );
+      })}
+    </ul>
+  );
+
+  return element;
+}
+
+ReactDOM.render(
+  React.createElement(ContactList),
+  document.getElementById("app")
+);
 ////////////////////////////////////////////////////////////////////////////////
 // React elements are plain JavaScript objects created with `createElement`
 // const element = React.createElement("input");
