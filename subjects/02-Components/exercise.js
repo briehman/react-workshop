@@ -13,7 +13,7 @@
 
 import React from "react";
 import ReactDOM from "react-dom";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const styles = {};
 
@@ -37,42 +37,39 @@ styles.panel = {
 
 class Tabs extends React.Component {
   static propTypes = {
-    data: PropTypes.array.isRequired,
-  }
+    data: PropTypes.array.isRequired
+  };
 
   constructor(props) {
     super(props);
-    this.state = { activeTab: this.props.data[0].id };
+    this.state = { activeId: this.props.data[0].id };
   }
 
-  changeTab = e => {
-    let selectedId = parseInt(e.target.getAttribute("data-id"));
-    this.setState({ activeTab: selectedId });
+  selectTab = id => {
+    this.setState({ activeId: id });
   };
 
   render() {
-    let tabs = this.props.data.map(sport => {
+    let data = this.props.data;
+    let activeId = this.state.activeId;
+
+    let tabs = data.map(item => {
       let tabClass =
-        this.state.activeTab === sport.id
-          ? styles.activeTab
-          : styles.tab;
+        activeId === item.id ? styles.activeTab : styles.tab;
 
       return (
         <div
-          key={sport.id}
+          key={item.id}
           className="Tab"
           style={tabClass}
-          data-id={sport.id}
-          onClick={this.changeTab}
+          onClick={() => this.selectTab(item.id)}
         >
-          {sport.name}
+          {item.name}
         </div>
       );
     });
 
-    let tabContent = this.props.data.filter(
-      d => d.id === this.state.activeTab
-    )[0].description;
+    let tabContent = data.find(d => d.id === activeId).description;
 
     return (
       <div className="Tabs">
@@ -87,8 +84,8 @@ class Tabs extends React.Component {
 
 class App extends React.Component {
   static propTypes = {
-    sports: PropTypes.array.isRequired,
-  }
+    sports: PropTypes.array.isRequired
+  };
 
   render() {
     return (
