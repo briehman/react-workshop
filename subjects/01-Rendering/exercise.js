@@ -30,29 +30,44 @@ const DATA = {
 };
 
 let selectedItem = DATA.items[0].type;
+let ascending = true;
+
+function updateThePage() {
+  ReactDOM.render(<App />, document.getElementById("app"));
+}
 
 function Menu() {
+  let items = DATA.items
+    .filter(item => item.type === selectedItem)
+    .sort(sortBy("name"))
+    .map(item => <li key={item.id}>{item.name}</li>);
+
+  if (!ascending) {
+    items = items.reverse();
+  }
+
   return (
     <div>
       <h1>
         {selectedItem} {DATA.title}
       </h1>
-      <ul>
-        {DATA.items
-          .filter(item => item.type === selectedItem)
-          .sort(sortBy("name"))
-          .map((item, index) => {
-            return <li key={index}>{item.name}</li>;
-          })}
-      </ul>
+      <ul>{items}</ul>
     </div>
   );
 }
 
 function handleChange(e) {
   selectedItem = e.target.options[e.target.selectedIndex].value;
-  console.log(selectedItem);
-  ReactDOM.render(<App />, document.getElementById("app"));
+  updateThePage();
+}
+
+function switchSort() {
+  ascending = !ascending;
+  updateThePage();
+}
+
+function SortSwitcher() {
+  return <button onClick={switchSort}>Reverse List</button>;
 }
 
 function Dropdown() {
@@ -60,7 +75,7 @@ function Dropdown() {
   return (
     <select onChange={handleChange}>
       {unique.map(item => {
-        return <option>{item}</option>;
+        return <option key={item}>{item}</option>;
       })}
     </select>
   );
@@ -69,12 +84,13 @@ function Dropdown() {
 function App() {
   return (
     <div>
+      <SortSwitcher />
+      <br/>
       <Dropdown />
       <Menu />
     </div>
   );
 }
 
-ReactDOM.render(<App />, document.getElementById("app"));
-
+updateThePage();
 require("./tests").run();
