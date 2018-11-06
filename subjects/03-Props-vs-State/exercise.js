@@ -21,54 +21,56 @@ import PropTypes from "prop-types";
 import * as styles from "./styles";
 import data from "./data";
 
-class Tabs extends React.Component {
-  static propTypes = {
-    data: PropTypes.array.isRequired
-  };
-
-  state = { activeIndex: 0 };
-
-  selectTab = index => this.setState({ activeIndex: index });
-
-  render() {
-    const tabs = this.props.data.map((item, index) => {
-      const isActive = index === this.state.activeIndex;
-      const style = isActive ? styles.activeTab : styles.tab;
-
-      return (
-        <div
-          key={index}
-          className="Tab"
-          style={style}
-          onClick={() => this.selectTab(index)}
-        >
-          {item.name}
-        </div>
-      );
-    });
-
-    const activeItem = this.props.data[this.state.activeIndex];
+function Tabs(props) {
+  const tabs = props.data.map((item, index) => {
+    const isActive = index === props.activeIndex;
+    const style = isActive ? styles.activeTab : styles.tab;
 
     return (
-      <div className="Tabs">
-        {tabs}
-        <div className="TabPanel" style={styles.panel}>
-          {activeItem && activeItem.description}
-        </div>
+      <div
+        key={index}
+        className="Tab"
+        style={style}
+        onClick={() => props.handleIndexChange(index)}
+      >
+        {item.name}
       </div>
     );
-  }
+  });
+
+  const activeItem = props.data[props.activeIndex];
+
+  return (
+    <div className="Tabs">
+      {tabs}
+      <div className="TabPanel" style={styles.panel}>
+        {activeItem && activeItem.description}
+      </div>
+    </div>
+  );
 }
 
 class App extends React.Component {
+  state = { activeIndex: 0 };
+
+  handleIndexChange = index => {
+    this.setState({ activeIndex: index });
+  };
+
   render() {
     return (
       <div>
         <h1>Props v. State</h1>
 
-        <button>Go to "Step 2"</button>
+        <button onClick={() => this.handleIndexChange(1)}>
+          Go to "Step 2"
+        </button>
 
-        <Tabs data={this.props.tabs} />
+        <Tabs
+          activeIndex={this.state.activeIndex}
+          handleIndexChange={this.handleIndexChange}
+          data={this.props.tabs}
+        />
       </div>
     );
   }
