@@ -29,10 +29,52 @@ const DATA = {
   ]
 };
 
+let selectedItem = DATA.items[0].type;
+
 function Menu() {
-  return <div>Open the console, you have failing tests.</div>;
+  return (
+    <div>
+      <h1>
+        {selectedItem} {DATA.title}
+      </h1>
+      <ul>
+        {DATA.items
+          .filter(item => item.type === selectedItem)
+          .sort(sortBy("name"))
+          .map((item, index) => {
+            return <li key={index}>{item.name}</li>;
+          })}
+      </ul>
+    </div>
+  );
 }
 
-ReactDOM.render(<Menu />, document.getElementById("app"));
+function handleChange(e) {
+  selectedItem = e.target.options[e.target.selectedIndex].value;
+  console.log(selectedItem);
+  ReactDOM.render(<App />, document.getElementById("app"));
+}
+
+function Dropdown() {
+  let unique = [...new Set(DATA.items.map(item => item.type))];
+  return (
+    <select onChange={handleChange}>
+      {unique.map(item => {
+        return <option>{item}</option>;
+      })}
+    </select>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Dropdown />
+      <Menu />
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("app"));
 
 require("./tests").run();
