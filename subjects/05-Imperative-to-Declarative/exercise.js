@@ -14,15 +14,24 @@ import "bootstrap/dist/css/bootstrap.min.css";
 class Modal extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    children: PropTypes.node
+    children: PropTypes.node,
+    isOpen: PropTypes.bool
   };
 
-  open() {
-    $(this.node).modal("show");
+  updateOpenState() {
+    if (this.props.isOpen) {
+      $(this.node).modal("show");
+    } else {
+      $(this.node).modal("hide");
+    }
   }
 
-  close() {
-    $(this.node).modal("hide");
+  componentDidUpdate() {
+    this.updateOpenState();
+  }
+
+  componentDidMount() {
+    this.updateOpenState();
   }
 
   render() {
@@ -43,12 +52,14 @@ class Modal extends React.Component {
 
 class App extends React.Component {
   openModal = () => {
-    this.modal.open();
+    this.setState({ isOpen: true });
   };
 
   closeModal = () => {
-    this.modal.close();
+    this.setState({ isOpen: false });
   };
+
+  state = { isOpen: false };
 
   render() {
     return (
@@ -60,6 +71,7 @@ class App extends React.Component {
         </button>
 
         <Modal
+          isOpen={this.state.isOpen}
           title="Declarative is better"
           ref={modal => (this.modal = modal)}
         >
