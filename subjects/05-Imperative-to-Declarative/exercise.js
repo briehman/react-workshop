@@ -70,11 +70,7 @@ class App extends React.Component {
           open modal
         </button>
 
-        <Modal
-          isOpen={this.state.isOpen}
-          title="Declarative is better"
-          ref={modal => (this.modal = modal)}
-        >
+        <Modal isOpen={this.state.isOpen} title="Declarative is better">
           <p>Calling methods on instances is a FLOW not a STOCK!</p>
           <p>
             It’s the dynamic process, not the static program in text
